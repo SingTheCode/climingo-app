@@ -13,10 +13,11 @@
 		189237FD2B73AD12004F3A14 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 189237FB2B73AD12004F3A14 /* Main.storyboard */; };
 		189237FF2B73AD13004F3A14 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 189237FE2B73AD13004F3A14 /* Assets.xcassets */; };
 		189238022B73AD13004F3A14 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 189238002B73AD13004F3A14 /* LaunchScreen.storyboard */; };
+		18BFD9CF2B9D537F004CF6B6 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 189238032B73AD13004F3A14 /* Info.plist */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		189237F22B73AD12004F3A14 /* 테스트 앱.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "테스트 앱.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		189237F22B73AD12004F3A14 /* climingo-app.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "climingo-app.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		189237F52B73AD12004F3A14 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		189237F72B73AD12004F3A14 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		189237F92B73AD12004F3A14 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -40,7 +41,7 @@
 		189237E92B73AD12004F3A14 = {
 			isa = PBXGroup;
 			children = (
-				189237F42B73AD12004F3A14 /* 테스트 앱 */,
+				189237F42B73AD12004F3A14 /* climingo-app */,
 				189237F32B73AD12004F3A14 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -48,12 +49,12 @@
 		189237F32B73AD12004F3A14 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				189237F22B73AD12004F3A14 /* 테스트 앱.app */,
+				189237F22B73AD12004F3A14 /* climingo-app.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		189237F42B73AD12004F3A14 /* 테스트 앱 */ = {
+		189237F42B73AD12004F3A14 /* climingo-app */ = {
 			isa = PBXGroup;
 			children = (
 				189237F52B73AD12004F3A14 /* AppDelegate.swift */,
@@ -64,15 +65,15 @@
 				189238002B73AD13004F3A14 /* LaunchScreen.storyboard */,
 				189238032B73AD13004F3A14 /* Info.plist */,
 			);
-			path = "테스트 앱";
+			path = "climingo-app";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		189237F12B73AD12004F3A14 /* 테스트 앱 */ = {
+		189237F12B73AD12004F3A14 /* climingo-app */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 189238062B73AD13004F3A14 /* Build configuration list for PBXNativeTarget "테스트 앱" */;
+			buildConfigurationList = 189238062B73AD13004F3A14 /* Build configuration list for PBXNativeTarget "climingo-app" */;
 			buildPhases = (
 				189237EE2B73AD12004F3A14 /* Sources */,
 				189237EF2B73AD12004F3A14 /* Frameworks */,
@@ -82,9 +83,9 @@
 			);
 			dependencies = (
 			);
-			name = "테스트 앱";
+			name = "climingo-app";
 			productName = "테스트 앱";
-			productReference = 189237F22B73AD12004F3A14 /* 테스트 앱.app */;
+			productReference = 189237F22B73AD12004F3A14 /* climingo-app.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -102,7 +103,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 189237ED2B73AD12004F3A14 /* Build configuration list for PBXProject "테스트 앱" */;
+			buildConfigurationList = 189237ED2B73AD12004F3A14 /* Build configuration list for PBXProject "climingo-app" */;
 			compatibilityVersion = "Xcode 14.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -115,7 +116,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				189237F12B73AD12004F3A14 /* 테스트 앱 */,
+				189237F12B73AD12004F3A14 /* climingo-app */,
 			);
 		};
 /* End PBXProject section */
@@ -125,6 +126,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				18BFD9CF2B9D537F004CF6B6 /* Info.plist in Resources */,
 				189238022B73AD13004F3A14 /* LaunchScreen.storyboard in Resources */,
 				189237FF2B73AD13004F3A14 /* Assets.xcassets in Resources */,
 				189237FD2B73AD12004F3A14 /* Main.storyboard in Resources */,
@@ -339,7 +341,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		189237ED2B73AD12004F3A14 /* Build configuration list for PBXProject "테스트 앱" */ = {
+		189237ED2B73AD12004F3A14 /* Build configuration list for PBXProject "climingo-app" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				189238042B73AD13004F3A14 /* Debug */,
@@ -348,7 +350,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		189238062B73AD13004F3A14 /* Build configuration list for PBXNativeTarget "테스트 앱" */ = {
+		189238062B73AD13004F3A14 /* Build configuration list for PBXNativeTarget "climingo-app" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				189238072B73AD13004F3A14 /* Debug */,
