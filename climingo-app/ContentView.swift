@@ -23,13 +23,15 @@ struct WebView: UIViewRepresentable {
 
 struct ContentView: View {
     var body: some View {
-        VStack {
-            WebView(url: URL(string: "https://app.climingo.xyz")!)
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .edgesIgnoringSafeArea(.all)
+            VStack {
+                WebView(url: URL(string: "https://app.climingo.xyz")!)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .edgesIgnoringSafeArea(.all)
+            }
+            .padding(.horizontal, 0) // 수평 패딩을 0으로 설정
+            .padding(.top, 1) // 상단 패딩이 0이면 노치 위로 배경이 보임
+            .padding(.bottom, 0) // 하단 패딩을 0으로 설정
         }
-        .padding()
-    }
 }
 
 #Preview {

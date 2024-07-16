@@ -36,7 +36,7 @@
 /* Begin PBXFileReference section */
 		3C67C8752C46051D003C1390 /* climingo-app.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "climingo-app.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		3C67C8782C46051D003C1390 /* climingo_appApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = climingo_appApp.swift; sourceTree = "<group>"; };
-		3C67C87A2C46051D003C1390 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		3C67C87A2C46051D003C1390 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; tabWidth = 4; };
 		3C67C87C2C46051F003C1390 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		3C67C87F2C46051F003C1390 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		3C67C8852C46051F003C1390 /* climingo-appTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "climingo-appTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
