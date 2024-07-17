@@ -8,6 +8,7 @@ struct WebView: UIViewRepresentable {
         let webView = WKWebView()
         webView.navigationDelegate = context.coordinator
         webView.uiDelegate = context.coordinator
+        webView.allowsBackForwardNavigationGestures = true // 뒤로가기 및 앞으로가기 제스처 허용
         return webView
     }
     
