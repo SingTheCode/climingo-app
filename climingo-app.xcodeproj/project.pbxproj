@@ -10,10 +10,10 @@
 		3C67C8792C46051D003C1390 /* climingo_appApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C67C8782C46051D003C1390 /* climingo_appApp.swift */; };
 		3C67C87B2C46051D003C1390 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C67C87A2C46051D003C1390 /* ContentView.swift */; };
 		3C67C87D2C46051F003C1390 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3C67C87C2C46051F003C1390 /* Assets.xcassets */; };
-		3C67C8802C46051F003C1390 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3C67C87F2C46051F003C1390 /* Preview Assets.xcassets */; };
 		3C67C88A2C46051F003C1390 /* climingo_appTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C67C8892C46051F003C1390 /* climingo_appTests.swift */; };
 		3C67C8942C46051F003C1390 /* climingo_appUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C67C8932C46051F003C1390 /* climingo_appUITests.swift */; };
 		3C67C8962C46051F003C1390 /* climingo_appUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C67C8952C46051F003C1390 /* climingo_appUITestsLaunchTests.swift */; };
+		3CE8E7962C47965A005C6C58 /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3CE8E7952C47965A005C6C58 /* Launch Screen.storyboard */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -38,12 +38,12 @@
 		3C67C8782C46051D003C1390 /* climingo_appApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = climingo_appApp.swift; sourceTree = "<group>"; };
 		3C67C87A2C46051D003C1390 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; tabWidth = 4; };
 		3C67C87C2C46051F003C1390 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		3C67C87F2C46051F003C1390 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		3C67C8852C46051F003C1390 /* climingo-appTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "climingo-appTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		3C67C8892C46051F003C1390 /* climingo_appTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = climingo_appTests.swift; sourceTree = "<group>"; };
 		3C67C88F2C46051F003C1390 /* climingo-appUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "climingo-appUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		3C67C8932C46051F003C1390 /* climingo_appUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = climingo_appUITests.swift; sourceTree = "<group>"; };
 		3C67C8952C46051F003C1390 /* climingo_appUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = climingo_appUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		3CE8E7952C47965A005C6C58 /* Launch Screen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = "Launch Screen.storyboard"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -97,17 +97,9 @@
 				3C67C8782C46051D003C1390 /* climingo_appApp.swift */,
 				3C67C87A2C46051D003C1390 /* ContentView.swift */,
 				3C67C87C2C46051F003C1390 /* Assets.xcassets */,
-				3C67C87E2C46051F003C1390 /* Preview Content */,
+				3CE8E7952C47965A005C6C58 /* Launch Screen.storyboard */,
 			);
 			path = "climingo-app";
-			sourceTree = "<group>";
-		};
-		3C67C87E2C46051F003C1390 /* Preview Content */ = {
-			isa = PBXGroup;
-			children = (
-				3C67C87F2C46051F003C1390 /* Preview Assets.xcassets */,
-			);
-			path = "Preview Content";
 			sourceTree = "<group>";
 		};
 		3C67C8882C46051F003C1390 /* climingo-appTests */ = {
@@ -231,7 +223,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3C67C8802C46051F003C1390 /* Preview Assets.xcassets in Resources */,
+				3CE8E7962C47965A005C6C58 /* Launch Screen.storyboard in Resources */,
 				3C67C87D2C46051F003C1390 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -419,15 +411,19 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"climingo-app/Preview Content\"";
 				DEVELOPMENT_TEAM = H727HV4PRF;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "클라밍고";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.sports";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = "Launch Screen.storyboard";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -448,15 +444,19 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"climingo-app/Preview Content\"";
 				DEVELOPMENT_TEAM = H727HV4PRF;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "클라밍고";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.sports";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = "Launch Screen.storyboard";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				LD_RUNPATH_SEARCH_PATHS = (
