@@ -82,7 +82,7 @@ struct ContentView: View {
         ZStack {
             Color.white.edgesIgnoringSafeArea(.all) // 배경을 흰색으로 설정
             VStack {
-                WebView(url: URL(string: "https://dev-app.climingo.xyz")!)
+                WebView(url: URL(string: "https://app.climingo.xyz")!)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .edgesIgnoringSafeArea(.all)
             }
