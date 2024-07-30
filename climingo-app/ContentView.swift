@@ -6,7 +6,12 @@ struct WebView: UIViewRepresentable {
     
     func makeUIView(context: Context) -> WKWebView {
         sleep(2)
-        let webView = WKWebView()
+        // WKWebViewConfiguration 설정
+        let webConfiguration = WKWebViewConfiguration()
+        webConfiguration.allowsInlineMediaPlayback = true
+        webConfiguration.mediaTypesRequiringUserActionForPlayback = []
+        
+        let webView = WKWebView(frame: .zero, configuration: webConfiguration)
         webView.navigationDelegate = context.coordinator
         webView.uiDelegate = context.coordinator
         webView.allowsBackForwardNavigationGestures = true // 뒤로가기 및 앞으로가기 제스처 허용
@@ -77,7 +82,7 @@ struct ContentView: View {
         ZStack {
             Color.white.edgesIgnoringSafeArea(.all) // 배경을 흰색으로 설정
             VStack {
-                WebView(url: URL(string: "https://app.climingo.xyz")!)
+                WebView(url: URL(string: "https://dev-app.climingo.xyz")!)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .edgesIgnoringSafeArea(.all)
             }
