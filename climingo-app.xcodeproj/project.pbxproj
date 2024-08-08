@@ -13,6 +13,7 @@
 		3C67C88A2C46051F003C1390 /* climingo_appTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C67C8892C46051F003C1390 /* climingo_appTests.swift */; };
 		3C67C8942C46051F003C1390 /* climingo_appUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C67C8932C46051F003C1390 /* climingo_appUITests.swift */; };
 		3C67C8962C46051F003C1390 /* climingo_appUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C67C8952C46051F003C1390 /* climingo_appUITestsLaunchTests.swift */; };
+		3C8D16B32C6444F7002F0134 /* DeveloperModeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C8D16B22C6444F7002F0134 /* DeveloperModeView.swift */; };
 		3CE8E7962C47965A005C6C58 /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3CE8E7952C47965A005C6C58 /* Launch Screen.storyboard */; };
 /* End PBXBuildFile section */
 
@@ -43,6 +44,7 @@
 		3C67C88F2C46051F003C1390 /* climingo-appUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "climingo-appUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		3C67C8932C46051F003C1390 /* climingo_appUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = climingo_appUITests.swift; sourceTree = "<group>"; };
 		3C67C8952C46051F003C1390 /* climingo_appUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = climingo_appUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		3C8D16B22C6444F7002F0134 /* DeveloperModeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeveloperModeView.swift; sourceTree = "<group>"; };
 		3CE8E7952C47965A005C6C58 /* Launch Screen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = "Launch Screen.storyboard"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -98,6 +100,7 @@
 				3C67C87A2C46051D003C1390 /* ContentView.swift */,
 				3C67C87C2C46051F003C1390 /* Assets.xcassets */,
 				3CE8E7952C47965A005C6C58 /* Launch Screen.storyboard */,
+				3C8D16B22C6444F7002F0134 /* DeveloperModeView.swift */,
 			);
 			path = "climingo-app";
 			sourceTree = "<group>";
@@ -251,6 +254,7 @@
 			files = (
 				3C67C87B2C46051D003C1390 /* ContentView.swift in Sources */,
 				3C67C8792C46051D003C1390 /* climingo_appApp.swift in Sources */,
+				3C8D16B32C6444F7002F0134 /* DeveloperModeView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
