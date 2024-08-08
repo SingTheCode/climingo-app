@@ -78,18 +78,71 @@ struct WebView: UIViewRepresentable {
 }
 
 struct ContentView: View {
+    @State private var showDeveloperMode = false
+    @State private var tapCount = 0
+    @State private var currentUrl = URL(string: UserDefaults.standard.string(forKey: "currentUrl") ?? "https://app.climingo.xyz")!
     var body: some View {
+        
         ZStack {
             Color.white.edgesIgnoringSafeArea(.all) // 배경을 흰색으로 설정
             VStack {
-                WebView(url: URL(string: "https://app.climingo.xyz")!)
+                WebView(url: currentUrl)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .edgesIgnoringSafeArea(.all)
             }
             .padding(.horizontal, 0) // 수평 패딩을 0으로 설정
             .padding(.top, 1) // 상단 패딩이 0이면 노치 위로 배경이 보임
             .padding(.bottom, 0) // 하단 패딩을 0으로 설정
+            
+            if showDeveloperMode {
+                DeveloperModeView(currentUrl: $currentUrl)
+            }
+            
+            GeometryReader { geometry in
+                Color.clear
+                    .frame(width: 80, height: 30)
+                    .position(x: geometry.size.width / 2, y: 10)
+                    .contentShape(Rectangle())
+                    .onTapGesture {
+                        tapCount += 1
+                        if tapCount == 7 {
+                            tapCount = 0
+                            authenticateDeveloper()
+                        }
+                    }
+            }
+            .frame(width: UIScreen.main.bounds.width, height: 20)
+            .position(x: UIScreen.main.bounds.width / 2, y: 10)
         }
+    }
+    
+    
+    private func authenticateDeveloper() {
+        let password = "climb_dev"
+        
+        guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+              let rootViewController = windowScene.windows.first?.rootViewController else {
+            return
+        }
+        
+        let alert = UIAlertController(title: "Developer Mode", message: "비밀번호를 입력하세요", preferredStyle: .alert)
+        alert.addTextField { textField in
+            textField.isSecureTextEntry = true
+        }
+        
+        alert.addAction(UIAlertAction(title: "확인", style: .default, handler: { _ in
+            if let input = alert.textFields?.first?.text, input == password {
+                showDeveloperMode = true
+            } else {
+                let errorAlert = UIAlertController(title: "", message: "비밀번호가 틀렸습니다.", preferredStyle: .alert)
+                errorAlert.addAction(UIAlertAction(title: "확인", style: .default))
+                rootViewController.present(errorAlert, animated: true)
+            }
+        }))
+        
+        alert.addAction(UIAlertAction(title: "취소", style: .cancel))
+        
+        rootViewController.present(alert, animated: true)
     }
 }
 
