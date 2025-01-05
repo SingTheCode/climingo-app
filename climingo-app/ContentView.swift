@@ -1,5 +1,7 @@
 import SwiftUI
-import WebKit
+@preconcurrency import WebKit
+import AVFoundation
+import Photos
 
 struct WebView: UIViewRepresentable {
     let url: URL
@@ -93,6 +95,9 @@ struct ContentView: View {
             .padding(.horizontal, 0) // 수평 패딩을 0으로 설정
             .padding(.top, 1) // 상단 패딩이 0이면 노치 위로 배경이 보임
             .padding(.bottom, 0) // 하단 패딩을 0으로 설정
+            .onAppear {
+                requestPermissions()
+            }
             
             if showDeveloperMode {
                 DeveloperModeView(currentUrl: $currentUrl)
@@ -143,6 +148,31 @@ struct ContentView: View {
         alert.addAction(UIAlertAction(title: "취소", style: .cancel))
         
         rootViewController.present(alert, animated: true)
+    }
+    
+    private func requestPermissions() {
+        // Request Camera Permission
+        AVCaptureDevice.requestAccess(for: .video) { granted in
+            if granted {
+                print("카메라 접근이 허용되었습니다.")
+            } else {
+                print("카메라 접근이 거부되었습니다.")
+            }
+        }
+        
+        // Request Photo Library Permission
+        PHPhotoLibrary.requestAuthorization { status in
+            switch status {
+            case .authorized:
+                print("앨범 접근이 허용되었습니다.")
+            case .denied, .restricted:
+                print("앨범 접근이 제한되었습니다.")
+            case .notDetermined:
+                print("앨범 접근이 거부되었습니다.")
+            default:
+                break
+            }
+        }
     }
 }
 
