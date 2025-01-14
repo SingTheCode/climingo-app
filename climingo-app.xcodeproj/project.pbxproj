@@ -344,6 +344,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				INFOPLIST_KEY_NSCameraUsageDescription = "영상을 촬영하여 첨부할 수 있습니다.\n";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "이 앱은 오디오 녹음을 위해 마이크를 사용합니다.";
 				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "영상을 선택하여 첨부할 수 있습니다.";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "영상을 선택하여 첨부할 수 있습니다.";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.5;
@@ -404,6 +405,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				INFOPLIST_KEY_NSCameraUsageDescription = "영상을 촬영하여 첨부할 수 있습니다.\n";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "이 앱은 오디오 녹음을 위해 마이크를 사용합니다.";
 				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "영상을 선택하여 첨부할 수 있습니다.";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "영상을 선택하여 첨부할 수 있습니다.";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.5;
