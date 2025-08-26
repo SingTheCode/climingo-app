@@ -13,6 +13,11 @@ struct WebView: UIViewRepresentable {
         webConfiguration.allowsInlineMediaPlayback = true
         webConfiguration.mediaTypesRequiringUserActionForPlayback = []
         
+        // JavaScript 메시지 핸들러 추가
+        let userContentController = WKUserContentController()
+        userContentController.add(context.coordinator, name: "share")
+        webConfiguration.userContentController = userContentController
+        
         let webView = WKWebView(frame: .zero, configuration: webConfiguration)
         webView.navigationDelegate = context.coordinator
         webView.uiDelegate = context.coordinator
@@ -29,7 +34,7 @@ struct WebView: UIViewRepresentable {
         Coordinator(self)
     }
     
-    class Coordinator: NSObject, WKNavigationDelegate, WKUIDelegate {
+    class Coordinator: NSObject, WKNavigationDelegate, WKUIDelegate, WKScriptMessageHandler {
         var parent: WebView
         
         init(_ parent: WebView) {
@@ -75,6 +80,67 @@ struct WebView: UIViewRepresentable {
             }))
             
             rootViewController.present(alert, animated: true, completion: nil)
+        }
+        
+        // MARK: - WKScriptMessageHandler
+        func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
+            if message.name == "share" {
+                handleShareMessage(message.body)
+            }
+        }
+        
+        private func handleShareMessage(_ messageBody: Any) {
+            guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+                  let rootViewController = windowScene.windows.first?.rootViewController else {
+                return
+            }
+            
+            var shareItems: [Any] = []
+            var shareText = ""
+            var shareUrl: URL?
+            
+            if let messageDict = messageBody as? [String: Any] {
+                if let text = messageDict["text"] as? String {
+                    shareText = text
+                    shareItems.append(text)
+                }
+                
+                if let urlString = messageDict["url"] as? String,
+                   let url = URL(string: urlString) {
+                    shareUrl = url
+                    shareItems.append(url)
+                }
+                
+                if let title = messageDict["title"] as? String, !title.isEmpty {
+                    if !shareText.isEmpty {
+                        shareText = "\(title)\n\(shareText)"
+                    } else {
+                        shareText = title
+                    }
+                    shareItems.removeAll()
+                    shareItems.append(shareText)
+                    if let url = shareUrl {
+                        shareItems.append(url)
+                    }
+                }
+            } else if let text = messageBody as? String {
+                shareItems.append(text)
+            }
+            
+            if shareItems.isEmpty {
+                shareItems.append("오늘도 바위를 얻어보세요! - Climingo")
+            }
+            
+            let activityViewController = UIActivityViewController(activityItems: shareItems, applicationActivities: nil)
+            
+            // iPad에서 popover 설정
+            if let popover = activityViewController.popoverPresentationController {
+                popover.sourceView = rootViewController.view
+                popover.sourceRect = CGRect(x: rootViewController.view.bounds.midX, y: rootViewController.view.bounds.midY, width: 0, height: 0)
+                popover.permittedArrowDirections = []
+            }
+            
+            rootViewController.present(activityViewController, animated: true, completion: nil)
         }
     }
 }
