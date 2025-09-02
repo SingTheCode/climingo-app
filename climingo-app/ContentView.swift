@@ -16,6 +16,7 @@ struct WebView: UIViewRepresentable {
         // JavaScript 메시지 핸들러 추가
         let userContentController = WKUserContentController()
         userContentController.add(context.coordinator, name: "share")
+        userContentController.add(context.coordinator, name: "downloadImage")
         webConfiguration.userContentController = userContentController
         
         let webView = WKWebView(frame: .zero, configuration: webConfiguration)
@@ -34,11 +35,16 @@ struct WebView: UIViewRepresentable {
         Coordinator(self)
     }
     
-    class Coordinator: NSObject, WKNavigationDelegate, WKUIDelegate, WKScriptMessageHandler {
+    class Coordinator: NSObject, WKNavigationDelegate, WKUIDelegate, WKScriptMessageHandler, ShareHandlerDelegate {
         var parent: WebView
+        private var shareHandler: ShareHandler!
+        private let imageDownloadHandler: ImageDownloadHandler
         
         init(_ parent: WebView) {
             self.parent = parent
+            self.imageDownloadHandler = ImageDownloadHandler()
+            super.init()
+            self.shareHandler = ShareHandler(delegate: self)
         }
         
         // Handle JavaScript alert
@@ -82,65 +88,22 @@ struct WebView: UIViewRepresentable {
             rootViewController.present(alert, animated: true, completion: nil)
         }
         
+        // MARK: - ShareHandlerDelegate
+        func getRootViewController() -> UIViewController? {
+            guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+                  let rootViewController = windowScene.windows.first?.rootViewController else {
+                return nil
+            }
+            return rootViewController
+        }
+        
         // MARK: - WKScriptMessageHandler
         func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
             if message.name == "share" {
-                handleShareMessage(message.body)
+                shareHandler.handleShareMessage(message.body, webView: message.webView)
+            } else if message.name == "downloadImage" {
+                imageDownloadHandler.handleDownloadImageMessage(message.body, webView: message.webView)
             }
-        }
-        
-        private func handleShareMessage(_ messageBody: Any) {
-            guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-                  let rootViewController = windowScene.windows.first?.rootViewController else {
-                return
-            }
-            
-            var shareItems: [Any] = []
-            var shareText = ""
-            var shareUrl: URL?
-            
-            if let messageDict = messageBody as? [String: Any] {
-                if let text = messageDict["text"] as? String {
-                    shareText = text
-                    shareItems.append(text)
-                }
-                
-                if let urlString = messageDict["url"] as? String,
-                   let url = URL(string: urlString) {
-                    shareUrl = url
-                    shareItems.append(url)
-                }
-                
-                if let title = messageDict["title"] as? String, !title.isEmpty {
-                    if !shareText.isEmpty {
-                        shareText = "\(title)\n\(shareText)"
-                    } else {
-                        shareText = title
-                    }
-                    shareItems.removeAll()
-                    shareItems.append(shareText)
-                    if let url = shareUrl {
-                        shareItems.append(url)
-                    }
-                }
-            } else if let text = messageBody as? String {
-                shareItems.append(text)
-            }
-            
-            if shareItems.isEmpty {
-                shareItems.append("오늘도 바위를 얻어보세요! - Climingo")
-            }
-            
-            let activityViewController = UIActivityViewController(activityItems: shareItems, applicationActivities: nil)
-            
-            // iPad에서 popover 설정
-            if let popover = activityViewController.popoverPresentationController {
-                popover.sourceView = rootViewController.view
-                popover.sourceRect = CGRect(x: rootViewController.view.bounds.midX, y: rootViewController.view.bounds.midY, width: 0, height: 0)
-                popover.permittedArrowDirections = []
-            }
-            
-            rootViewController.present(activityViewController, animated: true, completion: nil)
         }
     }
 }
@@ -239,6 +202,206 @@ struct ContentView: View {
                 break
             }
         }
+    }
+}
+
+// MARK: - Handler Protocols and Classes
+
+protocol ShareHandlerDelegate: AnyObject {
+    func getRootViewController() -> UIViewController?
+}
+
+class ShareHandler: NSObject {
+    weak var delegate: ShareHandlerDelegate?
+    
+    init(delegate: ShareHandlerDelegate?) {
+        self.delegate = delegate
+        super.init()
+    }
+    
+    func handleShareMessage(_ messageBody: Any, webView: WKWebView?) {
+        guard let rootViewController = delegate?.getRootViewController() else {
+            return
+        }
+        
+        var shareItems: [Any] = []
+        var shareText = ""
+        var shareUrl: URL?
+        
+        if let messageDict = messageBody as? [String: Any] {
+            if let text = messageDict["text"] as? String {
+                shareText = text
+                shareItems.append(text)
+            }
+            
+            if let urlString = messageDict["url"] as? String,
+               let url = URL(string: urlString) {
+                shareUrl = url
+                shareItems.append(url)
+            }
+            
+            if let title = messageDict["title"] as? String, !title.isEmpty {
+                if !shareText.isEmpty {
+                    shareText = "\(title)\n\(shareText)"
+                } else {
+                    shareText = title
+                }
+                shareItems.removeAll()
+                shareItems.append(shareText)
+                if let url = shareUrl {
+                    shareItems.append(url)
+                }
+            }
+        } else if let text = messageBody as? String {
+            shareItems.append(text)
+        }
+        
+        if shareItems.isEmpty {
+            shareItems.append("오늘도 바위를 얻어보세요! - Climingo")
+        }
+        
+        notifyWebOfShareStart(webView: webView)
+        
+        let activityViewController = UIActivityViewController(activityItems: shareItems, applicationActivities: nil)
+        
+        activityViewController.completionWithItemsHandler = { [weak self] activityType, completed, returnedItems, error in
+            if let error = error {
+                self?.notifyWebOfShareResult(webView: webView, success: false, activityType: activityType?.rawValue, message: "공유 중 오류가 발생했습니다: \(error.localizedDescription)")
+            } else if completed {
+                let activityName = self?.getActivityTypeName(activityType) ?? "알 수 없는 앱"
+                self?.notifyWebOfShareResult(webView: webView, success: true, activityType: activityType?.rawValue, message: "\(activityName)(으)로 공유되었습니다.")
+            } else {
+                self?.notifyWebOfShareResult(webView: webView, success: false, activityType: activityType?.rawValue, message: "공유가 취소되었습니다.")
+            }
+        }
+        
+        if let popover = activityViewController.popoverPresentationController {
+            popover.sourceView = rootViewController.view
+            popover.sourceRect = CGRect(x: rootViewController.view.bounds.midX, y: rootViewController.view.bounds.midY, width: 0, height: 0)
+            popover.permittedArrowDirections = []
+        }
+        
+        rootViewController.present(activityViewController, animated: true, completion: nil)
+    }
+    
+    private func notifyWebOfShareStart(webView: WKWebView?) {
+        let script = "window.onShareStart && window.onShareStart();"
+        webView?.evaluateJavaScript(script, completionHandler: nil)
+    }
+    
+    private func notifyWebOfShareResult(webView: WKWebView?, success: Bool, activityType: String?, message: String) {
+        let activityTypeString = activityType ?? "unknown"
+        let script = """
+            window.onShareComplete && window.onShareComplete({
+                success: \(success),
+                activityType: '\(activityTypeString)',
+                message: '\(message)'
+            });
+        """
+        webView?.evaluateJavaScript(script, completionHandler: nil)
+    }
+    
+    private func getActivityTypeName(_ activityType: UIActivity.ActivityType?) -> String {
+        guard let activityType = activityType else { return "알 수 없는 앱" }
+        
+        switch activityType {
+        case .message:
+            return "메시지"
+        case .mail:
+            return "메일"
+        case .copyToPasteboard:
+            return "클립보드"
+        case .postToFacebook:
+            return "Facebook"
+        case .postToTwitter:
+            return "Twitter"
+        case .postToWeibo:
+            return "Weibo"
+        case .saveToCameraRoll:
+            return "사진"
+        case .airDrop:
+            return "AirDrop"
+        default:
+            return "다른 앱"
+        }
+    }
+}
+
+class ImageDownloadHandler: NSObject {
+    
+    func handleDownloadImageMessage(_ messageBody: Any, webView: WKWebView?) {
+        guard let messageDict = messageBody as? [String: Any],
+              let urlString = messageDict["url"] as? String,
+              let imageUrl = URL(string: urlString),
+              let webView = webView else {
+            notifyWebOfDownloadResult(webView: webView, success: false, message: "잘못된 이미지 URL입니다.")
+            return
+        }
+        
+        notifyWebOfDownloadStart(webView: webView)
+        downloadImage(from: imageUrl, webView: webView)
+    }
+    
+    private func downloadImage(from url: URL, webView: WKWebView) {
+        let task = URLSession.shared.dataTask(with: url) { [weak self] data, response, error in
+            DispatchQueue.main.async {
+                if let error = error {
+                    self?.notifyWebOfDownloadResult(webView: webView, success: false, message: "다운로드 실패: \(error.localizedDescription)")
+                    return
+                }
+                
+                guard let data = data,
+                      let image = UIImage(data: data) else {
+                    self?.notifyWebOfDownloadResult(webView: webView, success: false, message: "이미지 형식이 올바르지 않습니다.")
+                    return
+                }
+                
+                self?.saveImageToPhotoLibrary(image: image, webView: webView)
+            }
+        }
+        task.resume()
+    }
+    
+    private func saveImageToPhotoLibrary(image: UIImage, webView: WKWebView) {
+        PHPhotoLibrary.requestAuthorization { status in
+            DispatchQueue.main.async {
+                switch status {
+                case .authorized, .limited:
+                    PHPhotoLibrary.shared().performChanges {
+                        PHAssetChangeRequest.creationRequestForAsset(from: image)
+                    } completionHandler: { success, error in
+                        DispatchQueue.main.async {
+                            if success {
+                                self.notifyWebOfDownloadResult(webView: webView, success: true, message: "이미지가 사진 앨범에 저장되었습니다.")
+                            } else {
+                                self.notifyWebOfDownloadResult(webView: webView, success: false, message: "사진 앨범 저장에 실패했습니다.")
+                            }
+                        }
+                    }
+                case .denied, .restricted:
+                    self.notifyWebOfDownloadResult(webView: webView, success: false, message: "사진 앨범 접근 권한이 필요합니다.")
+                case .notDetermined:
+                    self.notifyWebOfDownloadResult(webView: webView, success: false, message: "사진 앨범 접근 권한을 확인할 수 없습니다.")
+                @unknown default:
+                    self.notifyWebOfDownloadResult(webView: webView, success: false, message: "알 수 없는 권한 상태입니다.")
+                }
+            }
+        }
+    }
+    
+    private func notifyWebOfDownloadStart(webView: WKWebView?) {
+        let script = "window.onImageDownloadStart && window.onImageDownloadStart();"
+        webView?.evaluateJavaScript(script, completionHandler: nil)
+    }
+    
+    private func notifyWebOfDownloadResult(webView: WKWebView?, success: Bool, message: String) {
+        let script = """
+            window.onImageDownloadComplete && window.onImageDownloadComplete({
+                success: \(success),
+                message: '\(message)'
+            });
+        """
+        webView?.evaluateJavaScript(script, completionHandler: nil)
     }
 }
 
