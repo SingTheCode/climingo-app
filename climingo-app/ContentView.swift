@@ -86,13 +86,13 @@ struct WebView: UIViewRepresentable {
         // MARK: - WKScriptMessageHandler
         func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
             if message.name == "share" {
-                handleShareMessage(message.body)
+                handleShareMessage(message.body, webView: message.webView)
             } else if message.name == "downloadImage" {
                 handleDownloadImageMessage(message.body, webView: message.webView)
             }
         }
         
-        private func handleShareMessage(_ messageBody: Any) {
+        private func handleShareMessage(_ messageBody: Any, webView: WKWebView?) {
             guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
                   let rootViewController = windowScene.windows.first?.rootViewController else {
                 return
@@ -134,7 +134,22 @@ struct WebView: UIViewRepresentable {
                 shareItems.append("오늘도 바위를 얻어보세요! - Climingo")
             }
             
+            // 웹에 공유 시작 알림
+            notifyWebOfShareStart(webView: webView)
+            
             let activityViewController = UIActivityViewController(activityItems: shareItems, applicationActivities: nil)
+            
+            // 공유 완료 핸들러 추가
+            activityViewController.completionWithItemsHandler = { [weak self] activityType, completed, returnedItems, error in
+                if let error = error {
+                    self?.notifyWebOfShareResult(webView: webView, success: false, activityType: activityType?.rawValue, message: "공유 중 오류가 발생했습니다: \(error.localizedDescription)")
+                } else if completed {
+                    let activityName = self?.getActivityTypeName(activityType) ?? "알 수 없는 앱"
+                    self?.notifyWebOfShareResult(webView: webView, success: true, activityType: activityType?.rawValue, message: "\(activityName)(으)로 공유되었습니다.")
+                } else {
+                    self?.notifyWebOfShareResult(webView: webView, success: false, activityType: activityType?.rawValue, message: "공유가 취소되었습니다.")
+                }
+            }
             
             // iPad에서 popover 설정
             if let popover = activityViewController.popoverPresentationController {
@@ -221,6 +236,48 @@ struct WebView: UIViewRepresentable {
                 });
             """
             webView?.evaluateJavaScript(script, completionHandler: nil)
+        }
+        
+        private func notifyWebOfShareStart(webView: WKWebView?) {
+            let script = "window.onShareStart && window.onShareStart();"
+            webView?.evaluateJavaScript(script, completionHandler: nil)
+        }
+        
+        private func notifyWebOfShareResult(webView: WKWebView?, success: Bool, activityType: String?, message: String) {
+            let activityTypeString = activityType ?? "unknown"
+            let script = """
+                window.onShareComplete && window.onShareComplete({
+                    success: \(success),
+                    activityType: '\(activityTypeString)',
+                    message: '\(message)'
+                });
+            """
+            webView?.evaluateJavaScript(script, completionHandler: nil)
+        }
+        
+        private func getActivityTypeName(_ activityType: UIActivity.ActivityType?) -> String {
+            guard let activityType = activityType else { return "알 수 없는 앱" }
+            
+            switch activityType {
+            case .message:
+                return "메시지"
+            case .mail:
+                return "메일"
+            case .copyToPasteboard:
+                return "클립보드"
+            case .postToFacebook:
+                return "Facebook"
+            case .postToTwitter:
+                return "Twitter"
+            case .postToWeibo:
+                return "Weibo"
+            case .saveToCameraRoll:
+                return "사진"
+            case .airDrop:
+                return "AirDrop"
+            default:
+                return "다른 앱"
+            }
         }
     }
 }
