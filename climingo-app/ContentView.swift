@@ -16,6 +16,7 @@ struct WebView: UIViewRepresentable {
         // JavaScript 메시지 핸들러 추가
         let userContentController = WKUserContentController()
         userContentController.add(context.coordinator, name: "share")
+        userContentController.add(context.coordinator, name: "downloadImage")
         webConfiguration.userContentController = userContentController
         
         let webView = WKWebView(frame: .zero, configuration: webConfiguration)
@@ -86,6 +87,8 @@ struct WebView: UIViewRepresentable {
         func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
             if message.name == "share" {
                 handleShareMessage(message.body)
+            } else if message.name == "downloadImage" {
+                handleDownloadImageMessage(message.body, webView: message.webView)
             }
         }
         
@@ -141,6 +144,83 @@ struct WebView: UIViewRepresentable {
             }
             
             rootViewController.present(activityViewController, animated: true, completion: nil)
+        }
+        
+        private func handleDownloadImageMessage(_ messageBody: Any, webView: WKWebView?) {
+            guard let messageDict = messageBody as? [String: Any],
+                  let urlString = messageDict["url"] as? String,
+                  let imageUrl = URL(string: urlString),
+                  let webView = webView else {
+                notifyWebOfDownloadResult(webView: webView, success: false, message: "잘못된 이미지 URL입니다.")
+                return
+            }
+            
+            // 웹에 다운로드 시작 알림
+            notifyWebOfDownloadStart(webView: webView)
+            
+            downloadImage(from: imageUrl, webView: webView)
+        }
+        
+        private func downloadImage(from url: URL, webView: WKWebView) {
+            let task = URLSession.shared.dataTask(with: url) { [weak self] data, response, error in
+                DispatchQueue.main.async {
+                    if let error = error {
+                        self?.notifyWebOfDownloadResult(webView: webView, success: false, message: "다운로드 실패: \(error.localizedDescription)")
+                        return
+                    }
+                    
+                    guard let data = data,
+                          let image = UIImage(data: data) else {
+                        self?.notifyWebOfDownloadResult(webView: webView, success: false, message: "이미지 형식이 올바르지 않습니다.")
+                        return
+                    }
+                    
+                    self?.saveImageToPhotoLibrary(image: image, webView: webView)
+                }
+            }
+            task.resume()
+        }
+        
+        private func saveImageToPhotoLibrary(image: UIImage, webView: WKWebView) {
+            PHPhotoLibrary.requestAuthorization { status in
+                DispatchQueue.main.async {
+                    switch status {
+                    case .authorized, .limited:
+                        PHPhotoLibrary.shared().performChanges {
+                            PHAssetChangeRequest.creationRequestForAsset(from: image)
+                        } completionHandler: { success, error in
+                            DispatchQueue.main.async {
+                                if success {
+                                    self.notifyWebOfDownloadResult(webView: webView, success: true, message: "이미지가 사진 앨범에 저장되었습니다.")
+                                } else {
+                                    self.notifyWebOfDownloadResult(webView: webView, success: false, message: "사진 앨범 저장에 실패했습니다.")
+                                }
+                            }
+                        }
+                    case .denied, .restricted:
+                        self.notifyWebOfDownloadResult(webView: webView, success: false, message: "사진 앨범 접근 권한이 필요합니다.")
+                    case .notDetermined:
+                        self.notifyWebOfDownloadResult(webView: webView, success: false, message: "사진 앨범 접근 권한을 확인할 수 없습니다.")
+                    @unknown default:
+                        self.notifyWebOfDownloadResult(webView: webView, success: false, message: "알 수 없는 권한 상태입니다.")
+                    }
+                }
+            }
+        }
+        
+        private func notifyWebOfDownloadStart(webView: WKWebView?) {
+            let script = "window.onImageDownloadStart && window.onImageDownloadStart();"
+            webView?.evaluateJavaScript(script, completionHandler: nil)
+        }
+        
+        private func notifyWebOfDownloadResult(webView: WKWebView?, success: Bool, message: String) {
+            let script = """
+                window.onImageDownloadComplete && window.onImageDownloadComplete({
+                    success: \(success),
+                    message: '\(message)'
+                });
+            """
+            webView?.evaluateJavaScript(script, completionHandler: nil)
         }
     }
 }
